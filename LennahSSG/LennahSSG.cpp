@@ -96,6 +96,7 @@ static void version_message() {
 static void readTxt(string path) {
     string line;
     string title, line1, line2, line3;
+    bool hasTitle = false;
 
     ifstream inputFile;
     inputFile.open(path);
@@ -130,6 +131,7 @@ static void readTxt(string path) {
 
         if (line1 != "" && line2 == "" && line3 == "") {
             title = line1;
+            hasTitle = true;
         }
 
         outputFile << title;
@@ -140,6 +142,7 @@ static void readTxt(string path) {
             << "<body>\n";
 
         outputFile << "<h1>" << title << "</h1>\n";
+
 
         //Reading input file
         string prevLine;
