@@ -10,7 +10,7 @@ It's just the name I randomly got from a character and liked it.
 1. Clone the repo
 2. Get the absolute path of the LennahSSG.exe (e.g. ***C:\Users\\\<Your Name>\LennahSSG\Debug\LennahSSG.exe***)
 3. Add the text file or folder of text files to the same location
-4. Open the console and enter the path followed by an arugment
+4. Open the console and enter the path followed by an argument
 
 ## Arguments
 Argument | Description
