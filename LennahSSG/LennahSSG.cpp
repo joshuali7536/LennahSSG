@@ -14,6 +14,7 @@ void readTxt(string path);
 
 int main(int argc, char** argv)
 {
+    //Checking number of arguments
     if (argc < 2) {
         help_message();
         return 1;
@@ -69,6 +70,9 @@ int main(int argc, char** argv)
     return 0;
 }
 
+/*
+ * help_message - Displays the arguments
+ */
 static void help_message() {
     std::cout << "LENNAH - a static site generator" << endl;
     std::cout << "-----------------------------------" << endl;
@@ -78,10 +82,17 @@ static void help_message() {
     std::cout << "-v/--version" << endl;
 }
 
+/*
+ * version_message - Displays the version number of the application
+ */
 static void version_message() {
     std::cout << "LENNAH V" << VERSION;
 }
 
+/*
+ * readTxt - reads and converts a txt file to an html file
+ * path:    the file path of the txt file
+ */
 static void readTxt(string path) {
     string line;
     string title, line1, line2, line3;
