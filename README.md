@@ -16,7 +16,7 @@ Argument | Description
 ------------ | -------------
 `-h`, `--help` | Displays the help information
 `-v`, `--version` | Displays the current version number
-  `-i <PATH>`, `--input <PATH>` | Converts txt file(s) at the `<PATH>` to html. The output will be in a folder called `dist` in the exe's directory.
+  `-i <PATH>`, `--input <PATH>` | Converts txt file(s) at the `<PATH>` to html. The output will be in a folder called `dist` in the current directory (So make sure you know what directory you are calling the exe from).
 
 ## Features
 - Converts text files into a formatted html file
