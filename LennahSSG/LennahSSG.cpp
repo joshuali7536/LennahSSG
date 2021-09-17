@@ -4,13 +4,13 @@
 #include <direct.h>
 #include <filesystem>
 #include <sys/stat.h>
-#define VERSION 1.0
+#define VERSION 0.1
 
 using namespace std;
 
-void help_message();
-void version_message();
-void readTxt(string path);
+static void help_message();
+static void version_message();
+static void readTxt(string path);
 
 int main(int argc, char** argv)
 {
