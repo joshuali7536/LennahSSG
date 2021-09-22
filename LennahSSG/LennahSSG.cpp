@@ -11,6 +11,10 @@ using namespace std;
 void help_message();
 void version_message();
 void readTxt(string path);
+string italicize(string itLine);
+string boldify(string boldLine);
+int fileType = 0;
+
 
 int main(int argc, char** argv)
 {
@@ -46,19 +50,33 @@ int main(int argc, char** argv)
             }
 
             //Check if argument is Folder or txt File
-            size_t isFile = argDetail.find(".txt");
-            if (isFile != string::npos) {
+
+
+            if (argDetail.find(".txt") != string::npos) {
                 cout << "Converting: " << argDetail << endl;
+                fileType = 1;
+                readTxt(argDetail);
+            }
+            else if (argDetail.find(".md") != string::npos) {
+                cout << "Converting: " << argDetail << endl;
+                fileType = 2;
                 readTxt(argDetail);
             }
             else {
                 using fileIterator = filesystem::recursive_directory_iterator;
                 for (const auto& dirEntry : fileIterator(argDetail)) {
                     string path = dirEntry.path().string();
-                    size_t isTxt = path.find(".txt");
-                    if (isTxt != string::npos) {
+                    if (path.find(".txt") != string::npos || path.find(".md") != string::npos) {
+                        if (path.find(".txt") != string::npos) {
+                            cout << "Converting: " << path << endl;
+                                fileType = 1;
+                                readTxt(path);
+                        }
+                        else if (path.find(".md") != string::npos) {
                         cout << "Converting: " << path << endl;
+                        fileType = 2;
                         readTxt(path);
+                    }
                     }
                 }
             }
@@ -100,12 +118,10 @@ static void readTxt(string path) {
 
     ifstream inputFile;
     inputFile.open(path);
-
     if (!inputFile) {
         cout << "File not found. Please try again";
         exit(1);
     }
-
     //Creating Output file and inital html
     string base_filename = path.substr(path.find_last_of("/\\") + 1);
     string::size_type const p(base_filename.find_last_of('.'));
@@ -147,8 +163,16 @@ static void readTxt(string path) {
         //Reading input file
         string prevLine;
         while (getline(inputFile, line)) {
+            //markdown
+            if (((line.find("**") || line.find("__") != string::npos) && fileType == 2)) {
+                line = boldify(line);
+            }
+            if ((line.find("*") != string::npos || line.find("_") != string::npos) && fileType == 2) {
+                line = italicize(line);
+            }
+            //format <p> tags
             if (prevLine == "" && line != "") {
-                outputFile << "<p>\n"
+               outputFile << "<p>\n"                
                     << line << "\n";
             }
             else if (prevLine != "" && line == "") {
@@ -169,4 +193,37 @@ static void readTxt(string path) {
         << "</html>";
 
     outputFile.close();
+}
+
+string italicize(string itLine) {
+    while (itLine.find("*") != string::npos || itLine.find("_")) {
+        if (itLine.find("*") != string::npos && itLine.find("*") != itLine.find_last_of("*")) {
+            itLine.replace(itLine.find("*"), 1, "<i>");
+            itLine.replace(itLine.find_last_of("*"), 1, "</i>");            
+        }
+        else if (itLine.find("_") != string::npos && itLine.find("_") != itLine.find_last_of("*")) {
+            itLine.replace(itLine.find("_"), 1, "<i>");
+            itLine.replace(itLine.find_last_of("_"), 1, "</i>");            
+        }
+        else {
+            return itLine;
+        }
+    }
+    return itLine;
+}
+string boldify(string boldLine) {
+    while (boldLine.find("**") != string::npos || boldLine.find("__") != string::npos) {
+        if (boldLine.find("**") != string::npos && boldLine.find("**") != boldLine.find_last_of("**")) {
+            boldLine.replace(boldLine.find("**"), 2, "<b>");
+            boldLine.replace(boldLine.find_last_of("**") - 1, 2, "</b>");            
+        }
+        else if (boldLine.find("__") != string::npos && boldLine.find("__") != boldLine.find_last_of("__")) {
+            boldLine.replace(boldLine.find("__"), 1, "<b>");
+            boldLine.replace(boldLine.find_last_of("__"), 1, "</b>");            
+        }
+        else {
+            return boldLine;
+        }
+    }    
+    return boldLine;
 }
