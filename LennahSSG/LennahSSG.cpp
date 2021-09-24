@@ -170,13 +170,12 @@ static void readTxt(string path) {
             if (fileType == 2) {
                 if (line.find("**") != string::npos || line.find("__") != string::npos) {
                     line = boldify(line);
-                }                
-            }
-            if (fileType == 2) {
+                }            
                 if (line.find("*") != string::npos || line.find("_") != string::npos) {
                     line = italicize(line);
-                }                
+                }
             }
+
             //format <p> tags
             if (prevLine == "" && line != "") {
                outputFile << "<p>\n"                
