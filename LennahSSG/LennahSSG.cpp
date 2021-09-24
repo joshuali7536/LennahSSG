@@ -112,9 +112,7 @@ static void version_message() {
  * path:    the file path of the txt file
  */
 static void readTxt(string path) {
-    string line;
-    string title, line1, line2, line3;
-    bool hasTitle = false;
+    string title, line;
 
     ifstream inputFile;
     inputFile.open(path);
@@ -133,24 +131,28 @@ static void readTxt(string path) {
 
     if (inputFile.is_open()) {
 
+        if (fileType == 1) {
+            string line1, line2, line3;
+            bool hasTitle = false;
 
-        //Getting Title
-        outputFile << "<!doctype html>\n"
-            << "<html lang = \"en\">\n"
-            << "<head>\n"
-            << "<meta charset=\"utf-8\">\n"
-            << "<title>";
+            //Getting Title
+            outputFile << "<!doctype html>\n"
+                << "<html lang = \"en\">\n"
+                << "<head>\n"
+                << "<meta charset=\"utf-8\">\n"
+                << "<title>";
 
-        getline(inputFile, line1);
-        getline(inputFile, line2);
-        getline(inputFile, line3);
+            getline(inputFile, line1);
+            getline(inputFile, line2);
+            getline(inputFile, line3);
 
-        if (line1 != "" && line2 == "" && line3 == "") {
-            title = line1;
-            hasTitle = true;
+            if (line1 != "" && line2 == "" && line3 == "") {
+                title = line1;
+                hasTitle = true;
+            }
+            outputFile << title;
         }
-
-        outputFile << title;
+       
 
         outputFile << "</title>\n"
             << "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
@@ -164,10 +166,10 @@ static void readTxt(string path) {
         string prevLine;
         while (getline(inputFile, line)) {
             //markdown
-            if (((line.find("**") || line.find("__") != string::npos) && fileType == 2)) {
+            if (fileType == 2) {
                 line = boldify(line);
             }
-            if ((line.find("*") != string::npos || line.find("_") != string::npos) && fileType == 2) {
+            if (fileType == 2) {
                 line = italicize(line);
             }
             //format <p> tags
