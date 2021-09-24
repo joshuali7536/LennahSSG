@@ -131,17 +131,18 @@ static void readTxt(string path) {
 
     if (inputFile.is_open()) {
 
+        outputFile << "<!doctype html>\n"
+            << "<html lang = \"en\">\n"
+            << "<head>\n"
+            << "<meta charset=\"utf-8\">\n"
+            << "<title>";
+
         if (fileType == 1) {
+            
+
+            //Getting Title     
             string line1, line2, line3;
             bool hasTitle = false;
-
-            //Getting Title
-            outputFile << "<!doctype html>\n"
-                << "<html lang = \"en\">\n"
-                << "<head>\n"
-                << "<meta charset=\"utf-8\">\n"
-                << "<title>";
-
             getline(inputFile, line1);
             getline(inputFile, line2);
             getline(inputFile, line3);
@@ -167,10 +168,14 @@ static void readTxt(string path) {
         while (getline(inputFile, line)) {
             //markdown
             if (fileType == 2) {
-                line = boldify(line);
+                if (line.find("**") != string::npos || line.find("__") != string::npos) {
+                    line = boldify(line);
+                }                
             }
             if (fileType == 2) {
-                line = italicize(line);
+                if (line.find("*") != string::npos || line.find("_") != string::npos) {
+                    line = italicize(line);
+                }                
             }
             //format <p> tags
             if (prevLine == "" && line != "") {
