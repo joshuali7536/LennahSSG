@@ -13,6 +13,7 @@ void version_message();
 void readTxt(string path);
 string italicize(string itLine);
 string boldify(string boldLine);
+string trim(string line);
 int fileType = 0;
 
 
@@ -174,6 +175,9 @@ static void readTxt(string path) {
                 if (line.find("*") != string::npos || line.find("_") != string::npos) {
                     line = italicize(line);
                 }
+                if (trim(line) == "---") {
+                    line = "<hr>";
+                }
             }
 
             //format <p> tags
@@ -232,4 +236,11 @@ string boldify(string boldLine) {
         }
     }    
     return boldLine;
+}
+string trim(string line)
+{
+    const char* WhiteSpace = " \t\v\r\n";
+    size_t start = line.find_first_not_of(WhiteSpace);
+    size_t end = line.find_last_not_of(WhiteSpace);
+    return start == end ? string() : line.substr(start, end - start + 1);
 }
