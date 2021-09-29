@@ -13,6 +13,7 @@ void version_message();
 void readTxt(string path);
 string italicize(string itLine);
 string boldify(string boldLine);
+string inlineCode(string line);
 int fileType = 0;
 
 
@@ -174,6 +175,9 @@ static void readTxt(string path) {
                 if (line.find("*") != string::npos || line.find("_") != string::npos) {
                     line = italicize(line);
                 }
+                if (line.find("`") != string::npos) {
+                    line = inlineCode(line);
+                }
             }
 
             //format <p> tags
@@ -232,4 +236,16 @@ string boldify(string boldLine) {
         }
     }    
     return boldLine;
+}
+string inlineCode(string line) {
+    while (line.find("`") != string::npos) {
+        if (line.find("`") != string::npos && line.find("`") != line.find_last_of("`")) {
+            line.replace(line.find("`"), 1, "<code>");
+            line.replace(line.find("`"), 1, "</code>");
+        }
+        else {
+            return line;
+        }
+    }
+    return line;
 }
