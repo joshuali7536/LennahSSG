@@ -64,6 +64,11 @@ int main(int argc, char** argv)
                 fileType = 2;
                 readTxt(argDetail);
             }
+            else if (argDetail.find(".json") != string::npos) {
+                cout << "Converting: " << argDetail << endl;
+                fileType = 2;
+                readTxt(argDetail);
+            }
             else {
                 using fileIterator = filesystem::recursive_directory_iterator;
                 for (const auto& dirEntry : fileIterator(argDetail)) {
@@ -82,8 +87,6 @@ int main(int argc, char** argv)
                     }
                 }
             }
-
-
         }
     }
 
