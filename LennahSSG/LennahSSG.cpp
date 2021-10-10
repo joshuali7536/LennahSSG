@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <direct.h>
+//#include <direct.h>
 #include <filesystem>
 #include <sys/stat.h>
 #define VERSION 1.0
@@ -10,7 +10,9 @@ using namespace std;
 
 void help_message();
 void version_message();
-void readTxt(string path);
+void readTxt(string path, bool config);
+bool checkConfig(int argc, char** argv);
+string readConfig(string inputFile, string input, string output);
 string italicize(string itLine);
 string boldify(string boldLine);
 string trim(string line);
@@ -42,32 +44,24 @@ int main(int argc, char** argv)
     else if (argc == 3) {
         std::string arg = argv[1];
         std::string argDetail = argv[2];
-        if ((arg == "-i") || (arg == "--input")) {
-
-            //Delete folder if already exists
-            std::filesystem::remove_all("./dist");
-            //Create New Folder
-            if (_mkdir("./dist") != 0) {
-                exit(1);
+        bool config = checkConfig(argc, argv);
+        if ((arg == "-c") || (arg == "--config")) {
+            if (argDetail.find(".json") != string::npos) {
+                    cout << "Converting: " << argDetail << endl;
+                    fileType = 1;
+                    readTxt(argDetail, config);
             }
-
-            //Check if argument is Folder or txt File
-
-
-            if (argDetail.find(".txt") != string::npos) {
+        }
+        if ((arg == "-i") || (arg == "--input")) {
+        if (argDetail.find(".txt") != string::npos) {
                 cout << "Converting: " << argDetail << endl;
                 fileType = 1;
-                readTxt(argDetail);
+                readTxt(argDetail, config);
             }
             else if (argDetail.find(".md") != string::npos) {
                 cout << "Converting: " << argDetail << endl;
                 fileType = 2;
-                readTxt(argDetail);
-            }
-            else if (argDetail.find(".json") != string::npos) {
-                cout << "Converting: " << argDetail << endl;
-                fileType = 2;
-                readTxt(argDetail);
+                readTxt(argDetail, config);
             }
             else {
                 using fileIterator = filesystem::recursive_directory_iterator;
@@ -77,12 +71,12 @@ int main(int argc, char** argv)
                         if (path.find(".txt") != string::npos) {
                             cout << "Converting: " << path << endl;
                                 fileType = 1;
-                                readTxt(path);
+                                readTxt(path, config);
                         }
                         else if (path.find(".md") != string::npos) {
                         cout << "Converting: " << path << endl;
                         fileType = 2;
-                        readTxt(path);
+                        readTxt(path, config);
                     }
                     }
                 }
@@ -96,7 +90,7 @@ int main(int argc, char** argv)
 /*
  * help_message - Displays the arguments
  */
-static void help_message() {
+void help_message() {
     std::cout << "LENNAH - a static site generator" << endl;
     std::cout << "-----------------------------------" << endl;
     std::cout << "Arguments:" << endl;
@@ -108,28 +102,76 @@ static void help_message() {
 /*
  * version_message - Displays the version number of the application
  */
-static void version_message() {
+void version_message() {
     std::cout << "LENNAH V" << VERSION;
+}
+bool checkConfig(int argc, char** argv) {
+    bool config = false;
+    for (int i = 1; i < argc; i++) {
+        if (string(argv[i]) == "-c" || string(argv[i]) == "--config") {
+            config = true;
+        }
+    }
+    return config;
+}
+string readConfig(string inputFile, string input, string output) {
+    string storeConfig = "";
+    ifstream configFile;
+    configFile.open(inputFile, ios::in);
+    if (configFile.is_open()) {
+        getline(configFile, storeConfig, '}');
+        configFile.close();
+    }
+        //if empty config
+        if (storeConfig.find("\"") == string::npos) {
+            cerr << "Config file is empty.";
+            exit(1);
+        }
+        else {
+            //if output folder is specified in config file
+            if (storeConfig.find("output") != string::npos) {  
+                size_t start = storeConfig.find("output") + 12;
+                size_t end = storeConfig.find("\"", start - 1);
+                output = storeConfig.substr(start, (end - start));
+            }
+            //get input from config file
+            if (storeConfig.find("input") != string::npos)
+            {
+                size_t start = storeConfig.find("input") + 9;
+                size_t end = storeConfig.find("\"", start + 2);
+                input = storeConfig.substr(start, (end - start));
+            }
+        }
+    return storeConfig;
 }
 
 /*
  * readTxt - reads and converts a txt file to an html file
  * path:    the file path of the txt file
  */
-static void readTxt(string path) {
-    string title, line;
-
+void readTxt(string path, bool config) {
+    string title, line, output, input;
     ifstream inputFile;
     inputFile.open(path);
     if (!inputFile) {
         cout << "File not found. Please try again";
         exit(1);
     }
+    //Delete folder if already exists
+    std::filesystem::remove_all("./dist");
+    if (config){
+        readConfig(path, input, output);
+    } else {
+            //Create New Folder
+            if (std::filesystem::create_directory("dist") != 0) {
+                exit(1);
+            }
+    }
     //Creating Output file and inital html
     string base_filename = path.substr(path.find_last_of("/\\") + 1);
     string::size_type const p(base_filename.find_last_of('.'));
     string file_without_extension = base_filename.substr(0, p);
-    string newHTML = "./dist/" + file_without_extension + ".html";
+    string newHTML = output + file_without_extension + ".html";
     ofstream outputFile(newHTML);
 
     title = file_without_extension;
@@ -212,7 +254,6 @@ static void readTxt(string path) {
 
     outputFile.close();
 }
-
 string italicize(string itLine) {
     while (itLine.find("*") != string::npos || itLine.find("_")) {
         if (itLine.find("*") != string::npos && itLine.find("*") != itLine.find_last_of("*")) {
@@ -251,7 +292,6 @@ string trim(string line)
     size_t start = line.find_first_not_of(WhiteSpace);
     size_t end = line.find_last_not_of(WhiteSpace);
     return start == end ? string() : line.substr(start, end - start + 1);
-}
 }
 string inlineCode(string line) {
     while (line.find("`") != string::npos) {
