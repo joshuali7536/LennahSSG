@@ -173,7 +173,31 @@ string readConfig(string inputFile)
             size_t start = storeConfig.find("input") + 11;
             size_t end = storeConfig.find("\"", start + 2);
             input = storeConfig.substr(start, (end - start));
+            if (input.find(".txt") == string::npos)
+            {
+                using fileIterator = filesystem::recursive_directory_iterator;
+                for (const auto &dirEntry : fileIterator(input))
+                {
+                    string path = dirEntry.path().string();
+                    if (path.find(".txt") != string::npos || path.find(".md") != string::npos)
+                    {
+                        if (path.find(".txt") != string::npos)
+                        {
+                            cout << "Converting: " << path << endl;
+                            fileType = 1;
+                            readTxt(path, false);
+                        }
+                        else if (path.find(".md") != string::npos)
+                        {
+                            cout << "Converting: " << path << endl;
+                            fileType = 2;
+                            readTxt(path, false);
+                        }
+                    }
+                }
+            }
         }
+
     }
     return storeConfig;
 }
