@@ -50,6 +50,7 @@ int main(int argc, char **argv)
     {
         std::string arg = argv[1];
         std::string argDetail = argv[2];
+        output = "./dist/";
         bool config = checkConfig(argc, argv);
         if ((arg == "-c") || (arg == "--config"))
         {
@@ -196,12 +197,9 @@ void readTxt(string path, bool config)
         readConfig(configName);
         path = input;
     }
-    else
+    else 
     {
-        if (std::filesystem::create_directory("dist") != 0)
-        {
-            exit(1);
-        }
+        std::filesystem::create_directory("dist");
     }
     ifstream inputFile;
     inputFile.open(path);
@@ -214,8 +212,7 @@ void readTxt(string path, bool config)
     string base_filename = path.substr(path.find_last_of("/\\") + 1);
     string::size_type const p(base_filename.find_last_of('.'));
     string file_without_extension = base_filename.substr(0, p);
-    string newHTML = output + "/" + file_without_extension + ".html";
-    cout << "TEST" << newHTML;
+    string newHTML = output + file_without_extension + ".html";
     ofstream outputFile(newHTML);
 
     title = file_without_extension;
