@@ -249,7 +249,6 @@ string trim(string line)
     size_t end = line.find_last_not_of(WhiteSpace);
     return start == end ? string() : line.substr(start, end - start + 1);
 }
-}
 string inlineCode(string line) {
     while (line.find("`") != string::npos) {
         if (line.find("`") != string::npos && line.find("`") != line.find_last_of("`")) {
