@@ -157,19 +157,15 @@ string readConfig(string inputFile)
     else
     {
         //if output folder is specified in config file
-        output = "dist";
         if (storeConfig.find("output") != string::npos)
         {
-            cout << "Output FOUND" << endl;
             size_t start = storeConfig.find("output") + 12;
             size_t end = storeConfig.find("\"", start - 1);
             output = storeConfig.substr(start, (end - start));
+            output += "/";
         }
         //Create New Folder
-        if (std::filesystem::create_directory(output) != 0)
-        {
-            exit(1);
-        }
+        std::filesystem::create_directory(output);
         input = inputFile;
         //get input from config file
         if (storeConfig.find("input") != string::npos)
@@ -177,7 +173,6 @@ string readConfig(string inputFile)
             size_t start = storeConfig.find("input") + 11;
             size_t end = storeConfig.find("\"", start + 2);
             input = storeConfig.substr(start, (end - start));
-            cout << input << endl;
         }
     }
     return storeConfig;
@@ -214,7 +209,6 @@ void readTxt(string path, bool config)
     string file_without_extension = base_filename.substr(0, p);
     string newHTML = output + file_without_extension + ".html";
     ofstream outputFile(newHTML);
-
     title = file_without_extension;
 
     if (inputFile.is_open())
