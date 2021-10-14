@@ -1,5 +1,5 @@
 {
-  "input": "./SilverBlaze.txt",
+  "input": "./textfiles",
   "output": "./build",
   "stylesheet": "https://cdn.jsdelivr.net/npm/water.css@2/out/water.css",
   "lang": "fr"

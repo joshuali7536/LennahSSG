@@ -1,27 +1,22 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-//#include <direct.h>
 #include <filesystem>
 #include <sys/stat.h>
+#include "Config.h"
+#include "FileReader.h"
 #define VERSION 1.0
 
 using namespace std;
 
 void help_message();
 void version_message();
-void readTxt(string path, bool config);
-bool checkConfig(int argc, char **argv);
-string readConfig(string inputFile);
-string italicize(string itLine);
-string boldify(string boldLine);
-string trim(string line);
-string inlineCode(string line);
-string output, input, configName;
-int fileType = 0;
+void inputManager(string input, string output);
+void createDir(string dirPath);
 
 int main(int argc, char **argv)
 {
+    Config config;
     //Checking number of arguments
     if (argc < 2)
     {
@@ -50,58 +45,91 @@ int main(int argc, char **argv)
     {
         std::string arg = argv[1];
         std::string argDetail = argv[2];
-        output = "./dist/";
-        bool config = checkConfig(argc, argv);
-        if ((arg == "-c") || (arg == "--config"))
+        
+        //Check if config argument is given and what config file is called
+        string configFilePath = config.getConfig(argc, argv);
+        if (configFilePath != "")
         {
-            if (argDetail.find(".json") != string::npos)
+            if (configFilePath.find(".json") != string::npos)
             {
-                cout << "Converting: " << argDetail << endl;
-                fileType = 1;
-                readTxt(argDetail, config);
-            }
-        }
-        if ((arg == "-i") || (arg == "--input"))
-        {
-            if (argDetail.find(".txt") != string::npos)
-            {
-                cout << "Converting: " << argDetail << endl;
-                fileType = 1;
-                readTxt(argDetail, config);
-            }
-            else if (argDetail.find(".md") != string::npos)
-            {
-                cout << "Converting: " << argDetail << endl;
-                fileType = 2;
-                readTxt(argDetail, config);
+                cout << "Reading Config: " << configFilePath << endl;
+                config.readConfig(configFilePath);
+                inputManager(config.getInput(), config.getOutput());
             }
             else
             {
-                using fileIterator = filesystem::recursive_directory_iterator;
-                for (const auto &dirEntry : fileIterator(argDetail))
-                {
-                    string path = dirEntry.path().string();
-                    if (path.find(".txt") != string::npos || path.find(".md") != string::npos)
-                    {
-                        if (path.find(".txt") != string::npos)
-                        {
-                            cout << "Converting: " << path << endl;
-                            fileType = 1;
-                            readTxt(path, config);
-                        }
-                        else if (path.find(".md") != string::npos)
-                        {
-                            cout << "Converting: " << path << endl;
-                            fileType = 2;
-                            readTxt(path, config);
-                        }
-                    }
-                }
+                cout << "Config file must be a JSON file." << endl;
             }
+        }
+        else if ((arg == "-i") || (arg == "--input"))
+        {
+            inputManager(argDetail, "./dist/");
         }
     }
 
     return 0;
+}
+
+/*
+ * inputManager - checks input type and converts file(s)
+ */
+void inputManager(string input, string output)
+{
+    FileReader reader;
+    int fileType;
+
+    //Making Folder
+    createDir(output);
+
+    if (input.find(".txt") != string::npos)
+    {
+        cout << "Converting: " << input << endl;
+        cout << "Outputting to: " << output << endl;
+        fileType = 1;
+        reader.convertFile(input, output, fileType);
+    }
+    else if (input.find(".md") != string::npos)
+    {
+        cout << "Converting: " << input << endl;
+        cout << "Outputting to: " << output << endl;
+        fileType = 2;
+        reader.convertFile(input, output, fileType);
+    }
+    else
+    {
+        using fileIterator = filesystem::recursive_directory_iterator;
+        for (const auto& dirEntry : fileIterator(input))
+        {
+            string path = dirEntry.path().string();
+            if (path.find(".txt") != string::npos || path.find(".md") != string::npos)
+            {
+                if (path.find(".txt") != string::npos)
+                {
+                    cout << "Converting: " << path << endl;
+                    fileType = 1;
+                    reader.convertFile(path, output, fileType);
+                }
+                else if (path.find(".md") != string::npos)
+                {
+                    cout << "Converting: " << path << endl;
+                    fileType = 2;
+                    reader.convertFile(path, output, fileType);
+                }
+            }
+        }
+        cout << "Outputting to: " << output << endl;
+    }
+
+}
+
+/*
+ * createDir - deletes given directory if already exists and creates a new directory
+ */
+void createDir(string dirPath)
+{
+    //Delete folder if already exists
+    std::filesystem::remove_all(dirPath);
+    std::filesystem::create_directory(dirPath);
 }
 
 /*
@@ -124,265 +152,4 @@ void help_message()
 void version_message()
 {
     std::cout << "LENNAH V" << VERSION;
-}
-bool checkConfig(int argc, char **argv)
-{
-    bool config = false;
-    for (int i = 1; i < argc; i++)
-    {
-        if (string(argv[i]) == "-c" || string(argv[i]) == "--config")
-        {
-            config = true;
-            configName = argv[i + 1];
-        }
-    }
-    return config;
-}
-string readConfig(string inputFile)
-{
-    string storeConfig = "";
-    ifstream configFile;
-    configFile.open(inputFile, ios::in);
-    if (configFile.is_open())
-    {
-        getline(configFile, storeConfig, '}');
-        configFile.close();
-    }
-    //if empty config
-    if (storeConfig.find("\"") == string::npos)
-    {
-        cerr << "Config file is empty.";
-        exit(1);
-    }
-    else
-    {
-        //if output folder is specified in config file
-        if (storeConfig.find("output") != string::npos)
-        {
-            size_t start = storeConfig.find("output") + 12;
-            size_t end = storeConfig.find("\"", start - 1);
-            output = storeConfig.substr(start, (end - start));
-            output += "/";
-        }
-        //Create New Folder
-        std::filesystem::create_directory(output);
-        input = inputFile;
-        //get input from config file
-        if (storeConfig.find("input") != string::npos)
-        {
-            size_t start = storeConfig.find("input") + 11;
-            size_t end = storeConfig.find("\"", start + 2);
-            input = storeConfig.substr(start, (end - start));
-            if (input.find(".txt") == string::npos)
-            {
-                using fileIterator = filesystem::recursive_directory_iterator;
-                for (const auto &dirEntry : fileIterator(input))
-                {
-                    string path = dirEntry.path().string();
-                    if (path.find(".txt") != string::npos || path.find(".md") != string::npos)
-                    {
-                        if (path.find(".txt") != string::npos)
-                        {
-                            cout << "Converting: " << path << endl;
-                            fileType = 1;
-                            readTxt(path, false);
-                        }
-                        else if (path.find(".md") != string::npos)
-                        {
-                            cout << "Converting: " << path << endl;
-                            fileType = 2;
-                            readTxt(path, false);
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-    return storeConfig;
-}
-
-/*
- * readTxt - reads and converts a txt file to an html file
- * path:    the file path of the txt file
- */
-void readTxt(string path, bool config)
-{
-    string title, line;
-    //Delete folder if already exists
-    std::filesystem::remove_all("./dist");
-    if (config)
-    {
-        readConfig(configName);
-        path = input;
-    }
-    else 
-    {
-        std::filesystem::create_directory("dist");
-    }
-    ifstream inputFile;
-    inputFile.open(path);
-    if (!inputFile)
-    {
-        cout << "File not found. Please try again";
-        exit(1);
-    }
-    //Creating Output file and inital html
-    string base_filename = path.substr(path.find_last_of("/\\") + 1);
-    string::size_type const p(base_filename.find_last_of('.'));
-    string file_without_extension = base_filename.substr(0, p);
-    string newHTML = output + file_without_extension + ".html";
-    ofstream outputFile(newHTML);
-    title = file_without_extension;
-
-    if (inputFile.is_open())
-    {
-
-        outputFile << "<!doctype html>\n"
-                   << "<html lang = \"en\">\n"
-                   << "<head>\n"
-                   << "<meta charset=\"utf-8\">\n"
-                   << "<title>";
-
-        if (fileType == 1)
-        {
-
-            //Getting Title
-            string line1, line2, line3;
-            bool hasTitle = false;
-            getline(inputFile, line1);
-            getline(inputFile, line2);
-            getline(inputFile, line3);
-
-            if (line1 != "" && line2 == "" && line3 == "")
-            {
-                title = line1;
-                hasTitle = true;
-            }
-            outputFile << title;
-        }
-
-        outputFile << "</title>\n"
-                   << "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
-                   << "</head>\n"
-                   << "<body>\n";
-
-        outputFile << "<h1>" << title << "</h1>\n";
-
-        //Reading input file
-        string prevLine;
-        while (getline(inputFile, line))
-        {
-            //markdown
-            if (fileType == 2)
-            {
-                if (line.find("**") != string::npos || line.find("__") != string::npos)
-                {
-                    line = boldify(line);
-                }
-                if (line.find("*") != string::npos || line.find("_") != string::npos)
-                {
-                    line = italicize(line);
-                }
-                if (line.find("`") != string::npos)
-                {
-                    line = inlineCode(line);
-                }
-
-                if (trim(line) == "---")
-                {
-                    line = "<hr>";
-                }
-            }
-
-            //format <p> tags
-            if (prevLine == "" && line != "")
-            {
-                outputFile << "<p>\n"
-                           << line << "\n";
-            }
-            else if (prevLine != "" && line == "")
-            {
-                outputFile << "</p>\n";
-            }
-            else
-            {
-                outputFile << line << "\n";
-            }
-
-            prevLine = line;
-        }
-
-        inputFile.close();
-    }
-
-    outputFile << "</body>\n"
-               << "</html>";
-
-    outputFile.close();
-}
-string italicize(string itLine)
-{
-    while (itLine.find("*") != string::npos || itLine.find("_"))
-    {
-        if (itLine.find("*") != string::npos && itLine.find("*") != itLine.find_last_of("*"))
-        {
-            itLine.replace(itLine.find("*"), 1, "<i>");
-            itLine.replace(itLine.find_last_of("*"), 1, "</i>");
-        }
-        else if (itLine.find("_") != string::npos && itLine.find("_") != itLine.find_last_of("*"))
-        {
-            itLine.replace(itLine.find("_"), 1, "<i>");
-            itLine.replace(itLine.find_last_of("_"), 1, "</i>");
-        }
-        else
-        {
-            return itLine;
-        }
-    }
-    return itLine;
-}
-string boldify(string boldLine)
-{
-    while (boldLine.find("**") != string::npos || boldLine.find("__") != string::npos)
-    {
-        if (boldLine.find("**") != string::npos && boldLine.find("**") != boldLine.find_last_of("**"))
-        {
-            boldLine.replace(boldLine.find("**"), 2, "<b>");
-            boldLine.replace(boldLine.find_last_of("**") - 1, 2, "</b>");
-        }
-        else if (boldLine.find("__") != string::npos && boldLine.find("__") != boldLine.find_last_of("__"))
-        {
-            boldLine.replace(boldLine.find("__"), 1, "<b>");
-            boldLine.replace(boldLine.find_last_of("__"), 1, "</b>");
-        }
-        else
-        {
-            return boldLine;
-        }
-    }
-    return boldLine;
-}
-string trim(string line)
-{
-    const char *WhiteSpace = " \t\v\r\n";
-    size_t start = line.find_first_not_of(WhiteSpace);
-    size_t end = line.find_last_not_of(WhiteSpace);
-    return start == end ? string() : line.substr(start, end - start + 1);
-}
-string inlineCode(string line)
-{
-    while (line.find("`") != string::npos)
-    {
-        if (line.find("`") != string::npos && line.find("`") != line.find_last_of("`"))
-        {
-            line.replace(line.find("`"), 1, "<code>");
-            line.replace(line.find("`"), 1, "</code>");
-        }
-        else
-        {
-            return line;
-        }
-    }
-    return line;
 }
