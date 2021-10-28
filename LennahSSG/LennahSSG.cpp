@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include "Config.h"
 #include "FileReader.h"
+#include <list>
 #define VERSION 1.0
 
 using namespace std;
@@ -13,6 +14,7 @@ void help_message();
 void version_message();
 void inputManager(string input, string output);
 void createDir(string dirPath);
+void createIndexHTML(list<string> links, string output);
 
 int main(int argc, char **argv)
 {
@@ -97,6 +99,7 @@ void inputManager(string input, string output)
     }
     else
     {
+        list<string> generatedHTMLs;
         using fileIterator = filesystem::recursive_directory_iterator;
         for (const auto& dirEntry : fileIterator(input))
         {
@@ -107,17 +110,18 @@ void inputManager(string input, string output)
                 {
                     cout << "Converting: " << path << endl;
                     fileType = 1;
-                    reader.convertFile(path, output, fileType);
+                    generatedHTMLs.push_back(reader.convertFile(path, output, fileType));
                 }
                 else if (path.find(".md") != string::npos)
                 {
                     cout << "Converting: " << path << endl;
                     fileType = 2;
-                    reader.convertFile(path, output, fileType);
+                    generatedHTMLs.push_back(reader.convertFile(path, output, fileType));
                 }
             }
         }
         cout << "Outputting to: " << output << endl;
+        createIndexHTML(generatedHTMLs, output);
     }
 
 }
@@ -152,4 +156,31 @@ void help_message()
 void version_message()
 {
     std::cout << "LENNAH V" << VERSION;
+}
+
+void createIndexHTML(list<string> links, string output)
+{
+    ofstream outputFile(output + "/index.html");
+
+    outputFile << "<!doctype html>\n"
+        << "<html lang = \"en\">\n"
+        << "<head>\n"
+        << "<meta charset=\"utf-8\">\n"
+        << "<title>Home Page</title>"
+        << "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+        << "</head>\n"
+        << "<body>\n"
+        << "<h1>Home Page</h1>\n"
+        << "<h2>Table of Contents</h2>\n"
+        << "<ul>\n";
+
+    list<string>::iterator it;
+    for (it = links.begin(); it != links.end(); ++it) {
+        outputFile << "<li><a href=\"" << *it << "\">" << *it << "</li>";
+    }
+        
+    outputFile << "</ul>\n"
+        << "</body>\n"
+        << "</html>\n";
+
 }

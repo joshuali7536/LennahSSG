@@ -5,8 +5,10 @@
  * readTxt - reads and converts a .txt or .md file to an html file
  * path:    the file path of the .txt/.md file
  * config:  bool if there was a config file given
+ * 
+ * returns the path to the newly generated html
  */
-void FileReader::convertFile(string input, string output, int fileType)
+string FileReader::convertFile(string input, string output, int fileType)
 {
     Formatter format;
     string title, line;
@@ -114,4 +116,5 @@ void FileReader::convertFile(string input, string output, int fileType)
         << "</html>";
 
     outputFile.close();
+    return file_without_extension + ".html";
 }
