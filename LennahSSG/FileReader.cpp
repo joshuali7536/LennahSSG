@@ -61,7 +61,8 @@ string FileReader::convertFile(string input, string output, int fileType)
         outputFile << "</title>\n"
             << "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
             << "</head>\n"
-            << "<body>\n";
+            << "<body>\n"
+            << "<a href=\"index.html\">Home Page</a>\n";
 
         outputFile << "<h1>" << title << "</h1>\n";
 
