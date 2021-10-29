@@ -88,14 +88,14 @@ void inputManager(string input, string output)
         cout << "Converting: " << input << endl;
         cout << "Outputting to: " << output << endl;
         fileType = 1;
-        reader.convertFile(input, output, fileType);
+        reader.convertFile(input, output, fileType, false);
     }
     else if (input.find(".md") != string::npos)
     {
         cout << "Converting: " << input << endl;
         cout << "Outputting to: " << output << endl;
         fileType = 2;
-        reader.convertFile(input, output, fileType);
+        reader.convertFile(input, output, fileType, false);
     }
     else
     {
@@ -110,13 +110,13 @@ void inputManager(string input, string output)
                 {
                     cout << "Converting: " << path << endl;
                     fileType = 1;
-                    generatedHTMLs.push_back(reader.convertFile(path, output, fileType));
+                    generatedHTMLs.push_back(reader.convertFile(path, output, fileType, true));
                 }
                 else if (path.find(".md") != string::npos)
                 {
                     cout << "Converting: " << path << endl;
                     fileType = 2;
-                    generatedHTMLs.push_back(reader.convertFile(path, output, fileType));
+                    generatedHTMLs.push_back(reader.convertFile(path, output, fileType, true));
                 }
             }
         }

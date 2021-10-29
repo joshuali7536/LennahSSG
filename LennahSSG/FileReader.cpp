@@ -8,7 +8,7 @@
  * 
  * returns the name of the newly generated html file
  */
-string FileReader::convertFile(string input, string output, int fileType)
+string FileReader::convertFile(string input, string output, int fileType, bool isFolder)
 {
     Formatter format;
     string title, line;
@@ -61,8 +61,10 @@ string FileReader::convertFile(string input, string output, int fileType)
         outputFile << "</title>\n"
             << "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
             << "</head>\n"
-            << "<body>\n"
-            << "<a href=\"index.html\">Home Page</a>\n";
+            << "<body>\n";
+
+        if (isFolder)
+            outputFile << "<a href=\"index.html\">Home Page</a>\n";
 
         outputFile << "<h1>" << title << "</h1>\n";
 
