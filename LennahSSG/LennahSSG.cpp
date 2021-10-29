@@ -176,7 +176,7 @@ void createIndexHTML(list<string> links, string output)
 
     list<string>::iterator it;
     for (it = links.begin(); it != links.end(); ++it) {
-        outputFile << "<li><a href=\"" << *it << "\">" << *it << "</li>";
+        outputFile << "<li><a href=\"" << *it << ".html\">" << *it << "</li>";
     }
         
     outputFile << "</ul>\n"

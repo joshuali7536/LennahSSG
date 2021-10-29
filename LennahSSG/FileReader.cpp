@@ -6,7 +6,7 @@
  * path:    the file path of the .txt/.md file
  * config:  bool if there was a config file given
  * 
- * returns the path to the newly generated html
+ * returns the name of the newly generated html file
  */
 string FileReader::convertFile(string input, string output, int fileType)
 {
@@ -116,5 +116,5 @@ string FileReader::convertFile(string input, string output, int fileType)
         << "</html>";
 
     outputFile.close();
-    return file_without_extension + ".html";
+    return file_without_extension;
 }
