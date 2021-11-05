@@ -1,6 +1,5 @@
 #include "Formatter.h"
 
-
 /*
  * italicize - Returns the given string with italicized HTML where italicized markdown was used
  * itLine:  string line to be formatted with italicize
@@ -59,7 +58,7 @@ string Formatter::boldify(string boldLine)
  */
 string Formatter::trim(string line)
 {
-    const char* WhiteSpace = " \t\v\r\n";
+    const char *WhiteSpace = " \t\v\r\n";
     size_t start = line.find_first_not_of(WhiteSpace);
     size_t end = line.find_last_not_of(WhiteSpace);
     return start == end ? string() : line.substr(start, end - start + 1);

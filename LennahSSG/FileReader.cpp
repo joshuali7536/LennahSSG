@@ -1,6 +1,5 @@
 #include "FileReader.h"
 
-
 /*
  * readTxt - reads and converts a .txt or .md file to an html file
  * path:    the file path of the .txt/.md file
@@ -12,9 +11,6 @@ string FileReader::convertFile(string input, string output, int fileType, bool i
 {
     Formatter format;
     string title, line;
-
-    
-
 
     ifstream inputFile;
     inputFile.open(input);
@@ -35,17 +31,16 @@ string FileReader::convertFile(string input, string output, int fileType, bool i
     {
 
         outputFile << "<!doctype html>\n"
-            << "<html lang = \"en\">\n"
-            << "<head>\n"
-            << "<meta charset=\"utf-8\">\n"
-            << "<title>";
+                   << "<html lang = \"en\">\n"
+                   << "<head>\n"
+                   << "<meta charset=\"utf-8\">\n"
+                   << "<title>";
 
         if (fileType == 1)
         {
 
             //Getting Title
             string line1, line2, line3;
-            bool hasTitle = false;
             getline(inputFile, line1);
             getline(inputFile, line2);
             getline(inputFile, line3);
@@ -53,15 +48,14 @@ string FileReader::convertFile(string input, string output, int fileType, bool i
             if (line1 != "" && line2 == "" && line3 == "")
             {
                 title = line1;
-                hasTitle = true;
             }
             outputFile << title;
         }
 
         outputFile << "</title>\n"
-            << "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
-            << "</head>\n"
-            << "<body>\n";
+                   << "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+                   << "</head>\n"
+                   << "<body>\n";
 
         if (isFolder)
             outputFile << "<a href=\"index.html\">Home Page</a>\n";
@@ -97,8 +91,7 @@ string FileReader::convertFile(string input, string output, int fileType, bool i
             //format <p> tags
             if (prevLine == "" && line != "")
             {
-                outputFile << "<p>\n"
-                    << line << "\n";
+                outputFile << "<p>\n" << line << "\n";
             }
             else if (prevLine != "" && line == "")
             {
@@ -116,7 +109,7 @@ string FileReader::convertFile(string input, string output, int fileType, bool i
     }
 
     outputFile << "</body>\n"
-        << "</html>";
+               << "</html>";
 
     outputFile.close();
     return file_without_extension;

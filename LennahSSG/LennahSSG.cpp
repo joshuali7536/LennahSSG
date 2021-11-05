@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     {
         std::string arg = argv[1];
         std::string argDetail = argv[2];
-        
+
         //Check if config argument is given and what config file is called
         string configFilePath = config.getConfig(argc, argv);
         if (configFilePath != "")
@@ -101,7 +101,7 @@ void inputManager(string input, string output)
     {
         list<string> generatedHTMLs;
         using fileIterator = filesystem::recursive_directory_iterator;
-        for (const auto& dirEntry : fileIterator(input))
+        for (const auto &dirEntry : fileIterator(input))
         {
             string path = dirEntry.path().string();
             if (path.find(".txt") != string::npos || path.find(".md") != string::npos)
@@ -123,7 +123,6 @@ void inputManager(string input, string output)
         cout << "Outputting to: " << output << endl;
         createIndexHTML(generatedHTMLs, output);
     }
-
 }
 
 /*
@@ -163,24 +162,24 @@ void createIndexHTML(list<string> links, string output)
     ofstream outputFile(output + "/index.html");
 
     outputFile << "<!doctype html>\n"
-        << "<html lang = \"en\">\n"
-        << "<head>\n"
-        << "<meta charset=\"utf-8\">\n"
-        << "<title>Home Page</title>"
-        << "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
-        << "</head>\n"
-        << "<body>\n"
-        << "<h1>Home Page</h1>\n"
-        << "<h2>Table of Contents</h2>\n"
-        << "<ul>\n";
+               << "<html lang = \"en\">\n"
+               << "<head>\n"
+               << "<meta charset=\"utf-8\">\n"
+               << "<title>Home Page</title>"
+               << "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+               << "</head>\n"
+               << "<body>\n"
+               << "<h1>Home Page</h1>\n"
+               << "<h2>Table of Contents</h2>\n"
+               << "<ul>\n";
 
     list<string>::iterator it;
-    for (it = links.begin(); it != links.end(); ++it) {
+    for (it = links.begin(); it != links.end(); ++it)
+    {
         outputFile << "<li><a href=\"" << *it << ".html\">" << *it << "</li>";
     }
-        
-    outputFile << "</ul>\n"
-        << "</body>\n"
-        << "</html>\n";
 
+    outputFile << "</ul>\n"
+               << "</body>\n"
+               << "</html>\n";
 }
