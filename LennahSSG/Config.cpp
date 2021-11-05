@@ -1,7 +1,7 @@
 #include "Config.h"
 
-
-Config::Config() {
+Config::Config()
+{
     _input = "";
     _output = "./dist";
     _fileType = 0;
@@ -14,7 +14,7 @@ Config::Config() {
  *
  * returns a bool if config was a given argument
  */
-string Config::getConfig(int argc, char** argv)
+string Config::getConfig(int argc, char **argv)
 {
     string configName;
     for (int i = 1; i < argc; i++)
@@ -75,7 +75,6 @@ void Config::readConfig(string inputFile)
                 _fileType = 2;
             }
         }
-
     }
 }
 

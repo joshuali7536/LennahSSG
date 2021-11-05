@@ -7,16 +7,15 @@ using namespace std;
 
 class Config
 {
-	string _input;
-	string _output;
-	int _fileType;
+    string _input;
+    string _output;
+    int _fileType;
 
-public:
-	Config();
-	string getConfig(int argc, char** argv);
-	void readConfig(string inputFile);
-	string getInput();
-	string getOutput();
-	int getFileType();
+  public:
+    Config();
+    string getConfig(int argc, char **argv);
+    void readConfig(string inputFile);
+    string getInput();
+    string getOutput();
+    int getFileType();
 };
-
