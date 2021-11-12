@@ -1,3 +1,6 @@
+#define CATCH_CONFIG_RUNNER
+#include "catch.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -37,6 +40,11 @@ int main(int argc, char **argv)
         {
             help_message();
             return 0;
+        }
+        else if ((arg == "-t") || (arg == "--test"))
+        {
+            int result = Catch::Session().run();
+            return result;
         }
         else
         {

@@ -48,3 +48,10 @@ This will display the lint that needs fixing in errors.
     ![image](https://user-images.githubusercontent.com/49960519/140455702-b7e2f2f9-6e50-4617-bc5b-6e6930b8e6b8.png)
 1. Then you can view the lint that needs fixing in the warnings area below.
 1. You can also make a quick fix by pressing the drop down beside the Tidy button or pressing Alt+X
+
+## Testing
+To run the testing checks for the application it is really simple, just run the application like normally but add `--test` or `-t` as an argument when running. Then it will run the Unit Testing feature of LENNAH making checks with each function and end with a E2E test.
+
+```sh
+$ C:\Users\User\LennahSSG\Debug\LennahSSG.exe --test
+```

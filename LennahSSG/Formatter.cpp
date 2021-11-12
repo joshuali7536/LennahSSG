@@ -6,17 +6,17 @@
  */
 string Formatter::italicize(string itLine)
 {
-    while (itLine.find("*") != string::npos || itLine.find("_"))
+    while (itLine.find("*") != string::npos || itLine.find("_") != string::npos)
     {
-        if (itLine.find("*") != string::npos && itLine.find("*") != itLine.find_last_of("*"))
+        if (itLine.find("*") != string::npos && itLine.find("*") != itLine.rfind("*"))
         {
             itLine.replace(itLine.find("*"), 1, "<i>");
-            itLine.replace(itLine.find_last_of("*"), 1, "</i>");
+            itLine.replace(itLine.rfind("*"), 1, "</i>");
         }
-        else if (itLine.find("_") != string::npos && itLine.find("_") != itLine.find_last_of("*"))
+        else if (itLine.find("_") != string::npos && itLine.find("_") != itLine.rfind("_"))
         {
             itLine.replace(itLine.find("_"), 1, "<i>");
-            itLine.replace(itLine.find_last_of("_"), 1, "</i>");
+            itLine.replace(itLine.rfind("_"), 1, "</i>");
         }
         else
         {
@@ -34,15 +34,15 @@ string Formatter::boldify(string boldLine)
 {
     while (boldLine.find("**") != string::npos || boldLine.find("__") != string::npos)
     {
-        if (boldLine.find("**") != string::npos && boldLine.find("**") != boldLine.find_last_of("**"))
+        if (boldLine.find("**") != string::npos && boldLine.find("**") != boldLine.rfind("**"))
         {
             boldLine.replace(boldLine.find("**"), 2, "<b>");
-            boldLine.replace(boldLine.find_last_of("**") - 1, 2, "</b>");
+            boldLine.replace(boldLine.rfind("**"), 2, "</b>");
         }
-        else if (boldLine.find("__") != string::npos && boldLine.find("__") != boldLine.find_last_of("__"))
+        else if (boldLine.find("__") != string::npos && boldLine.find("__") != boldLine.rfind("__"))
         {
-            boldLine.replace(boldLine.find("__"), 1, "<b>");
-            boldLine.replace(boldLine.find_last_of("__"), 1, "</b>");
+            boldLine.replace(boldLine.find("__"), 2, "<b>");
+            boldLine.replace(boldLine.rfind("__"), 2, "</b>");
         }
         else
         {
@@ -72,10 +72,10 @@ string Formatter::inlineCode(string line)
 {
     while (line.find("`") != string::npos)
     {
-        if (line.find("`") != string::npos && line.find("`") != line.find_last_of("`"))
+        if (line.find("`") != string::npos && line.find("`") != line.rfind("`"))
         {
             line.replace(line.find("`"), 1, "<code>");
-            line.replace(line.find("`"), 1, "</code>");
+            line.replace(line.rfind("`"), 1, "</code>");
         }
         else
         {

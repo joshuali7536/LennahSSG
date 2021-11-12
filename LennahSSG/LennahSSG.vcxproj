@@ -145,8 +145,10 @@
     <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="Formatter.cpp" />
     <ClCompile Include="LennahSSG.cpp" />
+    <ClCompile Include="TestCases.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="catch.hpp" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="FileReader.h" />
     <ClInclude Include="Formatter.h" />
