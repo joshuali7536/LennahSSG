@@ -5,6 +5,7 @@
 #include <string>
 #include "catch.hpp"
 #include "Formatter.h"
+#include "Config.h"
 
 void inputManager(string input, string output);
 
@@ -97,6 +98,27 @@ TEST_CASE("Inline Code function", "[code]")
     SECTION("String with one `")
     {
         REQUIRE(test.inlineCode("`Hello World") == "`Hello World");
+    }
+}
+
+TEST_CASE("Config File reader", "[config]")
+{
+
+    SECTION("Check config reads properly")
+    {
+        Config config;
+        config.readConfig("./test/testConfig.json");
+        REQUIRE(config.getInput() == "Silver Blaze.txt");
+        REQUIRE(config.getOutput() == "build/");
+        REQUIRE(config.getFileType() == 1);
+    }
+    SECTION("Check config with md input")
+    {
+        Config config;
+        config.readConfig("./test/testConfigMD.json");
+        REQUIRE(config.getInput() == "TestMarkdown.md");
+        REQUIRE(config.getOutput() == "build/");
+        REQUIRE(config.getFileType() == 2);
     }
 }
 
