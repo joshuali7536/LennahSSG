@@ -1,6 +1,6 @@
 name: MSBuild
 
-on: [push]
+on: [push, pull_request]
 
 env:
   # Path to the solution file relative to the root of the project.
@@ -32,4 +32,4 @@ jobs:
       run: msbuild LennahSSG.sln
     - name: test
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: LennahSSG.exe -t
+      run: D:\a\LennahSSG\LennahSSG\x64\Debug\LennahSSG.exe -t
