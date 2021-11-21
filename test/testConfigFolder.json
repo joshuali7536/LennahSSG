@@ -1,0 +1,7 @@
+{
+    "input": "./Folder 1",
+    "output": "./build",
+    "stylesheet": "https://cdn.jsdelivr.net/npm/water.css@2/out/water.css",
+    "lang": "fr",
+    "test": "Stuff"
+}

@@ -112,6 +112,13 @@ TEST_CASE("Config File reader", "[config]")
         REQUIRE(config.getOutput() == "build/");
         REQUIRE(config.getFileType() == 1);
     }
+    SECTION("Check config reads properly with folder input")
+    {
+        Config config;
+        config.readConfig("./test/testConfigFolder.json");
+        REQUIRE(config.getInput() == "Folder 1");
+        REQUIRE(config.getOutput() == "build/");
+    }
     SECTION("Check config with md input")
     {
         Config config;
